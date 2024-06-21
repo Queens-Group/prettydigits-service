@@ -7,10 +7,12 @@ Created on 6/21/2024 8:30 PM
 Version 1.0
 */
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.http.HttpStatus;
 
 @Data
 @Builder
@@ -22,8 +24,10 @@ public class ApiResponse<T> {
     private String message;
     private T data;
 
-    public static ApiResponse<Void> setSuccess() {
-        return ApiResponse.<Void>builder()
+
+
+    public static <U> ApiResponse<U> setSuccess() {
+        return ApiResponse.<U>builder()
                 .code(200)
                 .message("Success")
                 .build();
@@ -34,5 +38,10 @@ public class ApiResponse<T> {
                 .code(200)
                 .message(message)
                 .build();
+    }
+
+    @JsonIgnore
+    public HttpStatus getHttpStatus() {
+        return HttpStatus.valueOf(this.code);
     }
 }

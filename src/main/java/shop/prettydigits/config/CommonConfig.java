@@ -29,7 +29,9 @@ public class CommonConfig {
     @Bean(AppConstant.NO_AUTH_PATHS)
     public String[] noAuthPaths() {
         return new String[]{
-
+                "/error**", "/swagger-ui/**",
+                "/api/v1/auth/login", "/rest-api-docs/**",
+                "/api/v1/auth/register", "/"
         };
     }
 

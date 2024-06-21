@@ -10,31 +10,24 @@ Created on 8/13/2023 11:10 PM
 Version 1.0
 */
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.validator.constraints.Length;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import shop.prettydigits.constant.Role;
+import shop.prettydigits.constant.role.Role;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 
 @Entity
-@Table(name = "MstUser")
+@Table(name = "users")
+@Builder
 @Setter
 @Getter
 @AllArgsConstructor
@@ -43,89 +36,41 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "UserId")
+    @Column(name = "user_id")
     private Long userId;
 
-    @Column(name = "FirstName")
-    @NotNull(message = "FirstName can't be null")
-    @NotEmpty(message = "FirstName can't be empty")
-    @NotBlank(message = "FirstName can't be blank")
-    @Length(message = "Firstname max length 50", max = 50)
-    private String firstName;
+    @Column(name = "fullname")
+    private String fullName;
 
-    @Column(name = "LastName")
-    @Length(message = "Lastname max length 50", max = 50)
-    private String lastName;
 
-    @Column(name = "Username", unique = true)
-    @NotNull(message = "Username can't be null")
-    @NotEmpty(message = "Username can't be empty")
-    @NotBlank(message = "Username can't be blank")
-    @Length(message = "Username max length 50", max = 50)
+    @Column(name = "username", unique = true, length = 20)
     private String username;
 
-    @Column(name = "Email", unique = true)
-    @NotNull(message = "Email can't be null")
-    @NotEmpty(message = "Email can't be empty")
-    @NotBlank(message = "Email can't be blank")
-    @Email
-    private String email;
-
-    @Column(name = "Phone")
+    @Column(name = "phone", length = 20)
     private String phone;
 
-    @Column(name = "Password")
-    @NotNull(message = "Password can't be null")
-    @NotEmpty(message = "Password can't be empty")
-    @NotBlank(message = "Password can't be blank")
-    @Length(message = "Password min length 6", min = 6)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Column(name = "password")
     private String password;
 
-//    @OneToOne
-//    private Cart cart;
-//
-//    @OneToMany
-//    @OnDelete(action = OnDeleteAction.CASCADE)
-//    @JoinColumn(name = "UserId", referencedColumnName = "UserId")
-//    private List<ShopOrder> shopOrders;
 
-
-    @Column(name = "Birthday")
-    private LocalDate birthDay;
-
-    @Column(name = "LastLogin")
-    private LocalDateTime lastLogin;
-
-    @Column(name = "Token")
-    private String token;
-
-    @Column(name = "TokenCounter")
-    private Integer tokenCounter=0;
-
-    @Column(name = "PasswordCounter")
-    private Integer passwordCounter=0;
-
-    @Column(name = "ModifiedDate")
-    private Date modifiedDate;
-
-    @Column(name = "ModifiedBy")
-    private Integer modifiedBy;
-
-    @Column(name = "CreatedAt")
+    @Column(name = "created_at")
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @Column(name = "UpdatedAt")
+    @Column(name = "updated_at")
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @Column(name = "IsDelete")
-    private Boolean isDelete = true;
+    @Column(name = "enabled")
+    private Boolean enabled = false;
 
     @Enumerated(EnumType.STRING)
     @Column
     private Role role;
 
+
+    @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
@@ -133,23 +78,26 @@ public class User implements UserDetails {
         return authorities;
     }
 
+    @JsonIgnore
     @Override
     public boolean isAccountNonExpired() {
-        return UserDetails.super.isAccountNonExpired();
+        return true;
     }
 
+    @JsonIgnore
     @Override
     public boolean isAccountNonLocked() {
-        return UserDetails.super.isAccountNonLocked();
+        return true;
     }
 
+    @JsonIgnore
     @Override
     public boolean isCredentialsNonExpired() {
-        return UserDetails.super.isCredentialsNonExpired();
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return this.enabled;
     }
 }

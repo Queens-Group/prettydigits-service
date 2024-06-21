@@ -1,4 +1,4 @@
-package shop.prettydigits.service;
+package shop.prettydigits.service.impl;
 /*
 @Author hakim a.k.a. Hakim Amarullah
 Java Developer
@@ -22,11 +22,14 @@ public class AppUserDetailsService implements UserDetailsService {
     @Autowired
     public AppUserDetailsService(UserRepository userRepository) {
         this.userRepository = userRepository;
+
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUsernameOrPhone(username)
+        return userRepository.findByUsernameOrPhone(username, username)
                 .orElseThrow(() -> new UsernameNotFoundException(String.format("%s doesn't exist", username)));
     }
+
+
 }

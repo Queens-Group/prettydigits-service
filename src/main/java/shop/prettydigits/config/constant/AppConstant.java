@@ -9,9 +9,11 @@ Version 1.0
 
 public class AppConstant {
 
-    public static final String PUBLIC_KEY = "rsa-public-key";
-    public static final String PRIVATE_KEY = "rsa-private-key";
 
     private AppConstant() {}
-    public static final String NO_AUTH_PATHS = "no-auth-path";
+    public static final String NO_AUTH_PATHS = "noAuthPaths";
+
+    public static final String PUBLIC_KEY = "rsaPublicKey";
+    public static final String PRIVATE_KEY = "rsaPrivateKey";
+
 }

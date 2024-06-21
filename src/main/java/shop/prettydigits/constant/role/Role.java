@@ -1,4 +1,4 @@
-package shop.prettydigits.constant;
+package shop.prettydigits.constant.role;
 /*
 @Author hakim a.k.a. Hakim Amarullah
 Java Developer
