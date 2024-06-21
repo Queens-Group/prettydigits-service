@@ -11,19 +11,24 @@ Version 1.0
 */
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import shop.prettydigits.constant.role.Role;
 
-import java.time.LocalDateTime;
+import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -32,7 +37,7 @@ import java.util.Collection;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class User implements UserDetails {
+public class User implements UserDetails, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,11 +61,11 @@ public class User implements UserDetails {
 
     @Column(name = "created_at")
     @CreationTimestamp
-    private LocalDateTime createdAt;
+    private ZonedDateTime createdAt;
 
     @Column(name = "updated_at")
     @UpdateTimestamp
-    private LocalDateTime updatedAt;
+    private ZonedDateTime updatedAt;
 
     @Column(name = "enabled")
     private Boolean enabled = false;
@@ -69,6 +74,10 @@ public class User implements UserDetails {
     @Column
     private Role role;
 
+    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "user")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonManagedReference
+    private Set<Address> addresses;
 
     @JsonIgnore
     @Override

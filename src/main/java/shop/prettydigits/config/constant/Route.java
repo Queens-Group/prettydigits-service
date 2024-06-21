@@ -8,6 +8,7 @@ Version 1.0
 */
 
 public class Route {
+
     private Route() {}
 
     public static final String API_V1 = "/api/v1";
@@ -16,4 +17,6 @@ public class Route {
     public static final String REGISTER = "/register";
 
     public static final String USER_INFO = "/userInfo";
+
+    public static final String ADDRESS = "/address";
 }

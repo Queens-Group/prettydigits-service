@@ -11,7 +11,7 @@ import java.util.TimeZone;
 public class PrettyDigitsServiceApplication {
 
 	public static void main(String[] args) {
-		TimeZone.setDefault(TimeZone.getTimeZone("GMT+7"));
+		TimeZone.setDefault(TimeZone.getTimeZone("Asia/Jakarta"));
 		SpringApplication.run(PrettyDigitsServiceApplication.class, args);
 	}
 
