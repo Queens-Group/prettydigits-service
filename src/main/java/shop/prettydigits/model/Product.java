@@ -28,7 +28,7 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(length = 20, nullable = false, unique = true)
+    @Column(length = 20, nullable = false)
     private String number;
 
     @Column
@@ -39,6 +39,10 @@ public class Product {
 
     @Column
     private String type;
+
+
+    @Column(name = "modified_by")
+    private String modifiedBy;
 
     @Column(name = "validity_period")
     private LocalDate validityPeriod;
