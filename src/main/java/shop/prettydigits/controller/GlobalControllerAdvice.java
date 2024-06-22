@@ -8,9 +8,9 @@ Version 1.0
 */
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -65,12 +65,16 @@ public class GlobalControllerAdvice {
         return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
     }
 
-    @ExceptionHandler(DisabledException.class)
-    public ResponseEntity<ApiResponse<String>> userDisabledHandler(AuthorizationDeniedException ex) {
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ApiResponse<String>> dataIntegrityViolationHandler(DataIntegrityViolationException ex) {
         ApiResponse<String> response = new ApiResponse<>();
-        response.setCode(403);
-        response.setMessage(ex.getMessage());
-        response.setData("You are not allowed to access this resource. Please contact admin.");
-        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+        response.setCode(400);
+        response.setMessage(ex.getMostSpecificCause().getLocalizedMessage());
+        response.setData(ex.getMessage());
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
+
+
+
 }
