@@ -12,7 +12,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import shop.prettydigits.model.Product;
 
+import java.util.Optional;
+
 public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     Page<Product> findAllByIsAvailableTrue(Pageable pageable);
+
+    Optional<Product> findByIdAndIsAvailableTrue(Integer productId);
 }

@@ -11,12 +11,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.prettydigits.dto.request.ProductRequest;
 import shop.prettydigits.dto.response.ApiResponse;
 import shop.prettydigits.model.Product;
+import shop.prettydigits.repository.CartItemRepository;
 import shop.prettydigits.repository.ProductRepository;
 import shop.prettydigits.service.ProductService;
 import shop.prettydigits.utils.AuthUtils;
@@ -30,11 +32,14 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
 
+    private final CartItemRepository cartItemRepository;
+
     private final ObjectMapper mapper;
 
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository, ObjectMapper mapper) {
+    public ProductServiceImpl(ProductRepository productRepository, CartItemRepository cartItemRepository, ObjectMapper mapper) {
         this.productRepository = productRepository;
+        this.cartItemRepository = cartItemRepository;
         this.mapper = mapper;
     }
 
@@ -54,6 +59,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Transactional
+    @Modifying
     @Override
     public ApiResponse<Void> deleteProduct(Principal principal, Integer productId) {
         Optional<Product> product = productRepository.findById(productId);
@@ -67,7 +73,9 @@ public class ProductServiceImpl implements ProductService {
         product.get().setIsAvailable(false);
         product.get().setModifiedBy(AuthUtils.getCurrentUsername(principal.getName()));
 
+
         productRepository.save(product.get());
+        cartItemRepository.deleteAllInBatchByProduct_id(productId);
         return ApiResponse.<Void>builder()
                 .code(200)
                 .message("success delete product")

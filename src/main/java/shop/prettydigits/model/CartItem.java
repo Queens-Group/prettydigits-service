@@ -32,6 +32,9 @@ public class CartItem {
     @JsonBackReference
     private Cart cart;
 
+    @ManyToOne
+    private Product product;
+
     @Column(name = "created_at")
     @CreationTimestamp
     private ZonedDateTime createdAt;

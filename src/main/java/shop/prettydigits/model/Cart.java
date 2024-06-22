@@ -7,7 +7,6 @@ Created on 6/22/2024 10:39 AM
 Version 1.0
 */
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -37,8 +36,7 @@ public class Cart {
     @JsonManagedReference
     private Set<CartItem> cartItems;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonBackReference
+    @OneToOne
     private User user;
 
     @Column(name = "created_at")
