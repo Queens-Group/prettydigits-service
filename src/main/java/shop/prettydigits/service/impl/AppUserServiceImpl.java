@@ -16,9 +16,7 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
@@ -30,7 +28,9 @@ import shop.prettydigits.dto.request.RegisterRequest;
 import shop.prettydigits.dto.response.ApiResponse;
 import shop.prettydigits.dto.response.LoginResponse;
 import shop.prettydigits.dto.response.RegisterResponse;
+import shop.prettydigits.model.Cart;
 import shop.prettydigits.model.User;
+import shop.prettydigits.repository.CartRepository;
 import shop.prettydigits.repository.UserRepository;
 import shop.prettydigits.service.AppUserService;
 import shop.prettydigits.utils.AuthUtils;
@@ -45,6 +45,8 @@ import java.util.stream.Collectors;
 public class AppUserServiceImpl implements AppUserService {
 
     private final UserRepository userRepository;
+
+    private final CartRepository cartRepository;
 
     private final BCryptPasswordEncoder passwordEncoder;
 
@@ -63,11 +65,13 @@ public class AppUserServiceImpl implements AppUserService {
 
     @Autowired
     public AppUserServiceImpl(UserRepository userRepository,
+                              CartRepository cartRepository,
                               BCryptPasswordEncoder passwordEncoder,
                               AuthenticationProvider authenticationProvider,
                               JwtEncoder jwtEncoder,
                               ObjectMapper mapper) {
         this.userRepository = userRepository;
+        this.cartRepository = cartRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationProvider = authenticationProvider;
         this.jwtEncoder = jwtEncoder;
@@ -143,11 +147,14 @@ public class AppUserServiceImpl implements AppUserService {
 
         User newUser = mapper.convertValue(request, User.class);
         newUser.setPassword(passwordEncoder.encode(request.getPassword()));
-
+        Cart cart = new Cart();
         if (newUser.getRole().equals(Role.USER)) {
             newUser.setEnabled(true);
         }
         userRepository.save(newUser);
+        cart.setUser(newUser);
+        cartRepository.save(cart);
+
 
         registerResponse = mapper.convertValue(newUser, RegisterResponse.class);
         response.setMessage("success register user");

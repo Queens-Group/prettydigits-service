@@ -32,4 +32,8 @@ public class Route {
 
     public static final String AVAILABLE = "/available";
 
+    public static final String CART = "/cart";
+
+    public static final String ADD_ITEM = "/add-item";
+
 }

@@ -79,10 +79,6 @@ public class User implements UserDetails, Serializable {
     @JsonManagedReference
     private Set<Address> addresses;
 
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "user")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonManagedReference
-    private Set<Cart> carts;
 
     @JsonIgnore
     @Override
