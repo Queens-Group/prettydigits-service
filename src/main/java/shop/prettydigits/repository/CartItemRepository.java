@@ -12,6 +12,8 @@ import shop.prettydigits.model.CartItem;
 
 public interface CartItemRepository extends JpaRepository<CartItem, Integer> {
 
-    int deleteAllInBatchByProduct_id(Integer productId);
+    void deleteAllInBatchByProduct_id(Integer productId);
+
+    int deleteByIdAndCart_idAndCart_User_userId(Integer itemId, Integer cartId, Long userId);
 
 }

@@ -44,4 +44,10 @@ public class CartController {
         ApiResponse<Cart> response = cartService.getUserCart(principal);
         return new ResponseEntity<>(response, response.getHttpStatus());
     }
+
+    @DeleteMapping(Route.CART_ID + Route.ITEM + Route.ITEM_ID)
+    public ResponseEntity<ApiResponse<Boolean>> removeItem(Principal principal, @PathVariable("cartId") Integer cartId, @PathVariable("itemId") Integer itemId) {
+        ApiResponse<Boolean> response = cartService.removeCartItem(principal, cartId, itemId);
+        return new ResponseEntity<>(response, response.getHttpStatus());
+    }
 }

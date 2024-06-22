@@ -10,7 +10,9 @@ Version 1.0
 public class Route {
 
 
-
+    public static final String CART_ID = "/{cartId}";
+    public static final String ITEM_ID = "/{itemId}";
+    public static final String ITEM = "/item";
 
     private Route() {}
 

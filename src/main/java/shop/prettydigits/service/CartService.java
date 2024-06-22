@@ -19,4 +19,6 @@ public interface CartService {
     ApiResponse<Boolean> addItemToCart(Principal principal, CartItemDTO cartItem) throws ExecutionException, InterruptedException;
 
     ApiResponse<Cart> getUserCart(Principal principal);
+
+    ApiResponse<Boolean> removeCartItem(Principal principal, Integer cartId, Integer itemId);
 }

@@ -87,4 +87,15 @@ public class CartServiceImpl implements CartService {
                 .data(cart)
                 .build();
     }
+
+    @Transactional
+    @Override
+    public ApiResponse<Boolean> removeCartItem(Principal principal, Integer cartId, Integer itemId) {
+        int affectedRow = cartItemRepository.deleteByIdAndCart_idAndCart_User_userId(itemId, cartId, AuthUtils.getCurrentUserId(principal));
+        return ApiResponse.<Boolean>builder()
+                .code(200)
+                .message("success remove item from cart")
+                .data(affectedRow > 0)
+                .build();
+    }
 }
