@@ -32,7 +32,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private User user;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "order")
@@ -59,6 +59,9 @@ public class Order {
     @Column(name = "created_at")
     @CreationTimestamp
     private ZonedDateTime createdAt;
+
+    @Column(name = "expired_at")
+    private ZonedDateTime expiredAt;
 
     @Column(name = "updated_at")
     @UpdateTimestamp

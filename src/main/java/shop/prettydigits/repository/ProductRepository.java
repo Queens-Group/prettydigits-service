@@ -19,4 +19,5 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     Page<Product> findAllByIsAvailableTrue(Pageable pageable);
 
     Optional<Product> findByIdAndIsAvailableTrue(Integer productId);
+
 }

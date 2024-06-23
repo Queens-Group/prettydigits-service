@@ -15,9 +15,9 @@ import shop.prettydigits.model.Product;
 
 public interface ProductService {
 
-    ApiResponse<Product> createProduct(Long userId, ProductRequest request);
+    ApiResponse<Product> createProduct(String username, ProductRequest request);
 
-    ApiResponse<Void> deleteProduct(Long userId, Integer productId);
+    ApiResponse<Void> deleteProduct(String username, Integer productId);
 
     ApiResponse<PagedModel<Product>> getAllAvailableProduct(Pageable pageable);
 }

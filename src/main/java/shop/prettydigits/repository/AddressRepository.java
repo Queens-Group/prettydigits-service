@@ -14,7 +14,7 @@ import java.util.List;
 
 public interface AddressRepository extends JpaRepository<Address, Integer> {
 
-    int deleteByIdAndUser_userId(Integer addressId, Long userId);
+    int deleteByIdAndUserUserId(Integer addressId, Long userId);
 
-    List<Address> findAllByUser_userId(Long userId);
+    List<Address> findAllByUserUserId(Long userId);
 }

@@ -32,7 +32,7 @@ public class CartItem {
     @JsonBackReference
     private Cart cart;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private Product product;
 
     @Column(name = "created_at")
@@ -42,4 +42,17 @@ public class CartItem {
     @Column(name = "updated_at")
     @UpdateTimestamp
     private ZonedDateTime updatedAt;
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof  CartItem item) {
+            return item.getId().equals(this.id);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 }
