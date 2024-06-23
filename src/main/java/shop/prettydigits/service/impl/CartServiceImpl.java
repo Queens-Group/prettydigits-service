@@ -45,13 +45,22 @@ public class CartServiceImpl implements CartService {
     public ApiResponse<Boolean> addItemToCart(Long userId, CartItemDTO cartItemDTO) throws ExecutionException, InterruptedException {
         CompletableFuture<Cart> userCart = CompletableFuture.supplyAsync(() -> cartRepository.findByUserUserId(userId));
         CompletableFuture<Optional<Product>> product = CompletableFuture.supplyAsync(() -> productRepository.findByIdAndIsAvailableTrue(cartItemDTO.getProductId()));
+        CompletableFuture<Boolean> checkDuplicateProduct = CompletableFuture.supplyAsync(() -> cartItemRepository.existsByProductId(cartItemDTO.getProductId()));
 
-        CompletableFuture.allOf(userCart, product).join();
+        CompletableFuture.allOf(userCart, product, checkDuplicateProduct).join();
 
         if (product.get().isEmpty()) {
             return ApiResponse.<Boolean>builder()
                     .code(404)
                     .message("failed added to cart, product does not exist or not available")
+                    .data(false)
+                    .build();
+        }
+
+        if (Boolean.TRUE.equals(checkDuplicateProduct.get())) {
+            return ApiResponse.<Boolean>builder()
+                    .code(409)
+                    .message("product already in cart")
                     .data(false)
                     .build();
         }

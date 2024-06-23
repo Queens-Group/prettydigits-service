@@ -12,14 +12,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import shop.prettydigits.config.properties.AppProperties;
 import shop.prettydigits.constant.order.OrderStatus;
 import shop.prettydigits.dto.response.ApiResponse;
+import shop.prettydigits.dto.response.CheckOrderValidity;
 import shop.prettydigits.model.*;
 import shop.prettydigits.repository.*;
 import shop.prettydigits.service.OrderService;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 @Service
@@ -36,11 +42,17 @@ public class OrderServiceImpl implements OrderService {
     private final CartItemRepository cartItemRepository;
     private final ProductRepository productRepository;
 
+    private final AppProperties appProperties;
+
     @Autowired
-    public OrderServiceImpl(CartRepository cartRepository, OrderRepository orderRepository, OrderItemRepository orderItemRepository, MidtransService midtransService,
+    public OrderServiceImpl(CartRepository cartRepository,
+                            OrderRepository orderRepository,
+                            OrderItemRepository orderItemRepository,
+                            MidtransService midtransService,
                             AddressRepository addressRepository,
                             CartItemRepository cartItemRepository,
-                            ProductRepository productRepository) {
+                            ProductRepository productRepository,
+                            AppProperties appProperties) {
         this.cartRepository = cartRepository;
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
@@ -48,6 +60,7 @@ public class OrderServiceImpl implements OrderService {
         this.addressRepository = addressRepository;
         this.cartItemRepository = cartItemRepository;
         this.productRepository = productRepository;
+        this.appProperties = appProperties;
     }
 
     @Transactional(rollbackFor = {Exception.class, RuntimeException.class})
@@ -83,29 +96,72 @@ public class OrderServiceImpl implements OrderService {
         newOrder.setShippingAddress(shippingAddress);
         newOrder.setUser(userCart.getUser());
         newOrder.setStatus(OrderStatus.UNPAID);
+        newOrder.setExpiredAt(ZonedDateTime.now(ZoneId.systemDefault()).plusMinutes(appProperties.getMAX_ORDER_EXPIRED()));
+
         orderRepository.save(newOrder);
         orderItemRepository.saveAllAndFlush(orderItems);
         newOrder.setOrderItems(new HashSet<>(orderItems));
 
-        String snapToken = midtransService.createSnapToken(newOrder);
+        String snapToken = midtransService.createSnapToken(newOrder, shippingAddress);
         newOrder.setSnapToken(snapToken);
 
         orderItems.forEach(item -> item.setOrder(newOrder));
 
 
         cartItemRepository.deleteAllInBatchByCartId(userCart.getId());
-        List<Product> product = orderItems.stream().map(item -> {
-            Product p = item.getProduct();
-            p.setIsAvailable(false);
-            return p;
-        }).toList();
-        productRepository.saveAllAndFlush(product);
+        List<Product> products = updateProductAvailability(orderItems, false);
+        productRepository.saveAllAndFlush(products);
 
         return ApiResponse.<Order>builder()
                 .code(201)
                 .message("success create order")
                 .data(newOrder)
                 .build();
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Modifying
+    @Override
+    public ApiResponse<CheckOrderValidity> checkOrderBeforePayment(Long userId, String orderId) {
+        Optional<Order> order = orderRepository.findByIdAndUserUserId(orderId, userId);
+        CheckOrderValidity orderValidity = new CheckOrderValidity();
+        if (order.isEmpty()) {
+            orderValidity.setReadyForPayment(false);
+            return ApiResponse.<CheckOrderValidity>builder()
+                    .code(200)
+                    .message("order does not exist")
+                    .data(orderValidity)
+                    .build();
+        }
+        ZonedDateTime expiredDatetime = order.get().getExpiredAt().withZoneSameInstant(ZoneId.systemDefault());
+        boolean isExpired = expiredDatetime.isBefore(ZonedDateTime.now(ZoneId.systemDefault()));
+
+        OrderStatus status = order.get().getStatus();
+        boolean isReadyForPayment = !isExpired && status.equals(OrderStatus.UNPAID);
+        orderValidity.setReadyForPayment(isReadyForPayment);
+
+
+        if (isExpired && status.equals(OrderStatus.UNPAID)) {
+            Order expiredOrder = order.get();
+            expiredOrder.setStatus(OrderStatus.CANCELLED);
+            List<Product> products = updateProductAvailability(new ArrayList<>(expiredOrder.getOrderItems()), true);
+            productRepository.saveAllAndFlush(products);
+        }
+        return ApiResponse.<CheckOrderValidity>builder()
+                .code(200)
+                .message("success check order expiry time")
+                .data(orderValidity)
+                .build();
+    }
+
+
+    private List<Product> updateProductAvailability(List<OrderItem> orderItems, boolean isAvailable) {
+        return orderItems.stream().map(item -> {
+            Product p = item.getProduct();
+            p.setIsAvailable(isAvailable);
+            return p;
+        }).toList();
+
     }
 
     @Override

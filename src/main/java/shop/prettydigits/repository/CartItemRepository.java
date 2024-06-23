@@ -14,6 +14,8 @@ public interface CartItemRepository extends JpaRepository<CartItem, Integer> {
 
     void deleteAllInBatchByProductId(Integer productId);
 
+    boolean existsByProductId(Integer productId);
+
     void deleteAllInBatchByCartId(Integer cartId);
 
     int deleteByIdAndCartIdAndCartUserUserId(Integer itemId, Integer cartId, Long userId);

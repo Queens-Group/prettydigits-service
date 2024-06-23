@@ -65,4 +65,9 @@ public class Address implements Serializable {
     @Column(name = "created_at")
     @CreationTimestamp
     private ZonedDateTime createdAt;
+
+    @Override
+    public String toString() {
+        return String.format("%s, %s, %s, %s, %s %s", details, village, subDistrict, district,province, zipCode);
+    }
 }

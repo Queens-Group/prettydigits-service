@@ -12,33 +12,31 @@ import com.midtrans.ConfigFactory;
 import com.midtrans.service.MidtransSnapApi;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import shop.prettydigits.config.properties.AppProperties;
 
 @Configuration
 @Getter
 @Setter
-@ConfigurationProperties("midtrans")
 public class MidtransConfig {
 
 
-    private String snapURL;
+    private final AppProperties appProperties;
 
-    private String clientKey;
-
-    private String serverKey;
-
-    private boolean isProduction;
-
+    @Autowired
+    public MidtransConfig(AppProperties appProperties) {
+        this.appProperties = appProperties;
+    }
 
 
     @Bean
     public Config getSnapConfig() {
         return Config.builder()
-                .setServerKey(serverKey)
-                .setClientKey(clientKey)
-                .setIsProduction(isProduction)
+                .setServerKey(appProperties.getMIDTRANS_SERVER_KEY())
+                .setClientKey(appProperties.getMIDTRANS_CLIENT_KEY())
+                .setIsProduction(appProperties.isMIDTRANS_IS_PRODUCTION())
                 .build();
     }
 

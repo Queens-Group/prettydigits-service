@@ -10,5 +10,9 @@ Version 1.0
 import org.springframework.data.jpa.repository.JpaRepository;
 import shop.prettydigits.model.Order;
 
+import java.util.Optional;
+
 public interface OrderRepository extends JpaRepository<Order, String> {
+
+    Optional<Order> findByIdAndUserUserId(String orderId, Long userId);
 }

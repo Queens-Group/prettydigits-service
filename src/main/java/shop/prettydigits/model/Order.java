@@ -50,6 +50,9 @@ public class Order {
     @Column(name = "payment_type", length = 50)
     private String paymentType;
 
+    @Column(name = "midtrans_transaction_id")
+    private String midtransTransactionId;
+
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 

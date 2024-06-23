@@ -17,6 +17,8 @@ public class Route {
     public static final String CHECKOUT = "/checkout";
     public static final String MIDTRANS = "/midtrans";
     public static final String NOTIFICATION = "/notification";
+    public static final String CHECK_EXPIRY = "/check-expiry";
+    public static final String ORDER_ID = "/{orderId}";
 
     private Route() {}
 

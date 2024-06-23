@@ -10,6 +10,7 @@ Version 1.0
 import com.midtrans.httpclient.error.MidtransError;
 import shop.prettydigits.constant.order.OrderStatus;
 import shop.prettydigits.dto.response.ApiResponse;
+import shop.prettydigits.dto.response.CheckOrderValidity;
 import shop.prettydigits.model.Order;
 
 import java.util.List;
@@ -17,6 +18,8 @@ import java.util.List;
 public interface OrderService {
 
     ApiResponse<Order> createOrder(Long userId, Integer addressId) throws MidtransError;
+
+    ApiResponse<CheckOrderValidity> checkOrderBeforePayment(Long userId, String orderId);
 
     ApiResponse<Object> updateOrderStatus(Long userId, String orderId, OrderStatus orderStatus);
 

@@ -2,7 +2,8 @@ services:
   pretty-digits:
     image: hakimamarullah/pretty-digits:betav1.0
     environment:
-      JAVA_ARGS: --spring.cloud.config.uri=http://host.docker.internal:8888 --spring.profiles.active=dev --spring.cloud.config.fail-fast=true
+      JAVA_ARGS: --spring.profiles.active=docker
+      JAVA_OPTS: -DSPRING_CLOUD_CONFIG_URI=http://host.docker.internal:8888?max-attempt=5
     ports:
       - "9991-9998:8080"
     restart: on-failure
