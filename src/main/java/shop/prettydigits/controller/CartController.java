@@ -17,6 +17,7 @@ import shop.prettydigits.dto.request.CartItemDTO;
 import shop.prettydigits.dto.response.ApiResponse;
 import shop.prettydigits.model.Cart;
 import shop.prettydigits.service.CartService;
+import shop.prettydigits.utils.AuthUtils;
 
 import java.security.Principal;
 import java.util.concurrent.ExecutionException;
@@ -35,19 +36,19 @@ public class CartController {
 
     @PostMapping(value = Route.ADD_ITEM)
     public ResponseEntity<ApiResponse<Boolean>> addItemToCart(Principal principal, @RequestBody @Valid CartItemDTO cartItemDTO) throws ExecutionException, InterruptedException {
-        ApiResponse<Boolean> response = cartService.addItemToCart(principal, cartItemDTO);
+        ApiResponse<Boolean> response = cartService.addItemToCart(AuthUtils.getCurrentUserId(principal), cartItemDTO);
         return new ResponseEntity<>(response, response.getHttpStatus());
     }
 
     @GetMapping("")
     public ResponseEntity<ApiResponse<Cart>> getUserCart(Principal principal) {
-        ApiResponse<Cart> response = cartService.getUserCart(principal);
+        ApiResponse<Cart> response = cartService.getUserCart(AuthUtils.getCurrentUserId(principal));
         return new ResponseEntity<>(response, response.getHttpStatus());
     }
 
     @DeleteMapping(Route.CART_ID + Route.ITEM + Route.ITEM_ID)
     public ResponseEntity<ApiResponse<Boolean>> removeItem(Principal principal, @PathVariable("cartId") Integer cartId, @PathVariable("itemId") Integer itemId) {
-        ApiResponse<Boolean> response = cartService.removeCartItem(principal, cartId, itemId);
+        ApiResponse<Boolean> response = cartService.removeCartItem(AuthUtils.getCurrentUserId(principal), cartId, itemId);
         return new ResponseEntity<>(response, response.getHttpStatus());
     }
 }

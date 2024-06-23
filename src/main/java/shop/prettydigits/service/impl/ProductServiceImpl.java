@@ -23,7 +23,6 @@ import shop.prettydigits.repository.ProductRepository;
 import shop.prettydigits.service.ProductService;
 import shop.prettydigits.utils.AuthUtils;
 
-import java.security.Principal;
 import java.util.Optional;
 
 
@@ -45,8 +44,8 @@ public class ProductServiceImpl implements ProductService {
 
     @Transactional
     @Override
-    public ApiResponse<Product> createProduct(Principal principal, ProductRequest request) {
-        String adminName = AuthUtils.getCurrentUsername(principal.getName());
+    public ApiResponse<Product> createProduct(Long userId, ProductRequest request) {
+        String adminName = AuthUtils.getCurrentUsername(userId.getName());
         Product product = mapper.convertValue(request, Product.class);
         product.setModifiedBy(adminName);
 
@@ -61,7 +60,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     @Modifying
     @Override
-    public ApiResponse<Void> deleteProduct(Principal principal, Integer productId) {
+    public ApiResponse<Void> deleteProduct(Long userId, Integer productId) {
         Optional<Product> product = productRepository.findById(productId);
 
         if (product.isEmpty()) {
@@ -71,7 +70,7 @@ public class ProductServiceImpl implements ProductService {
                     .build();
         }
         product.get().setIsAvailable(false);
-        product.get().setModifiedBy(AuthUtils.getCurrentUsername(principal.getName()));
+        product.get().setModifiedBy(AuthUtils.getCurrentUsername(userId.getName()));
 
 
         productRepository.save(product.get());

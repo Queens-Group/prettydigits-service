@@ -22,7 +22,6 @@ import shop.prettydigits.repository.ProductRepository;
 import shop.prettydigits.service.CartService;
 import shop.prettydigits.utils.AuthUtils;
 
-import java.security.Principal;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -48,8 +47,8 @@ public class CartServiceImpl implements CartService {
 
     @Transactional
     @Override
-    public ApiResponse<Boolean> addItemToCart(Principal principal, CartItemDTO cartItemDTO) throws ExecutionException, InterruptedException {
-        Long userId = AuthUtils.getCurrentUserId(principal);
+    public ApiResponse<Boolean> addItemToCart(Long userId, CartItemDTO cartItemDTO) throws ExecutionException, InterruptedException {
+        Long userId = AuthUtils.getCurrentUserId(userId);
         CompletableFuture<Cart> userCart = CompletableFuture.supplyAsync(() -> cartRepository.findByUser_userId(userId));
         CompletableFuture<Optional<Product>> product = CompletableFuture.supplyAsync(() -> productRepository.findByIdAndIsAvailableTrue(cartItemDTO.getProductId()));
 
@@ -78,8 +77,8 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public ApiResponse<Cart> getUserCart(Principal principal) {
-        Long userId = AuthUtils.getCurrentUserId(principal);
+    public ApiResponse<Cart> getUserCart(Long userId) {
+        Long userId = AuthUtils.getCurrentUserId(userId);
         Cart cart = cartRepository.findByUser_userId(userId);
         return ApiResponse.<Cart>builder()
                 .code(200)
@@ -90,8 +89,8 @@ public class CartServiceImpl implements CartService {
 
     @Transactional
     @Override
-    public ApiResponse<Boolean> removeCartItem(Principal principal, Integer cartId, Integer itemId) {
-        int affectedRow = cartItemRepository.deleteByIdAndCart_idAndCart_User_userId(itemId, cartId, AuthUtils.getCurrentUserId(principal));
+    public ApiResponse<Boolean> removeCartItem(Long userId, Integer cartId, Integer itemId) {
+        int affectedRow = cartItemRepository.deleteByIdAndCart_idAndCart_User_userId(itemId, cartId, AuthUtils.getCurrentUserId(userId));
         return ApiResponse.<Boolean>builder()
                 .code(200)
                 .message("success remove item from cart")

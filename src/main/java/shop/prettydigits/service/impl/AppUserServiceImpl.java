@@ -33,10 +33,8 @@ import shop.prettydigits.model.User;
 import shop.prettydigits.repository.CartRepository;
 import shop.prettydigits.repository.UserRepository;
 import shop.prettydigits.service.AppUserService;
-import shop.prettydigits.utils.AuthUtils;
 import shop.prettydigits.utils.CommonUtils;
 
-import java.security.Principal;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -164,8 +162,8 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
     @Override
-    public ApiResponse<User> getCurrentUserInfo(Principal principal) {
-        User user = userRepository.findByUserId(AuthUtils.getCurrentUserId(principal));
+    public ApiResponse<User> getCurrentUserInfo(Long userId) {
+        User user = userRepository.findByUserId(userId);
         return ApiResponse.<User>builder()
                 .code(200)
                 .data(user)

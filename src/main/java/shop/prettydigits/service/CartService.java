@@ -11,14 +11,13 @@ import shop.prettydigits.dto.request.CartItemDTO;
 import shop.prettydigits.dto.response.ApiResponse;
 import shop.prettydigits.model.Cart;
 
-import java.security.Principal;
 import java.util.concurrent.ExecutionException;
 
 public interface CartService {
 
-    ApiResponse<Boolean> addItemToCart(Principal principal, CartItemDTO cartItem) throws ExecutionException, InterruptedException;
+    ApiResponse<Boolean> addItemToCart(Long userId, CartItemDTO cartItem) throws ExecutionException, InterruptedException;
 
-    ApiResponse<Cart> getUserCart(Principal principal);
+    ApiResponse<Cart> getUserCart(Long userId);
 
-    ApiResponse<Boolean> removeCartItem(Principal principal, Integer cartId, Integer itemId);
+    ApiResponse<Boolean> removeCartItem(Long userId, Integer cartId, Integer itemId);
 }

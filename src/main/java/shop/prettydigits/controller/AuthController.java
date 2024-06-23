@@ -20,6 +20,7 @@ import shop.prettydigits.dto.response.LoginResponse;
 import shop.prettydigits.dto.response.RegisterResponse;
 import shop.prettydigits.model.User;
 import shop.prettydigits.service.AppUserService;
+import shop.prettydigits.utils.AuthUtils;
 
 import java.security.Principal;
 
@@ -49,7 +50,7 @@ public class AuthController {
     @GetMapping(Route.USER_INFO)
     @SecurityRequirement(name = "bearerJWT")
     public ResponseEntity<ApiResponse<User>> getCurrentUserInfo(Principal principal) {
-        ApiResponse<User> response = appUserService.getCurrentUserInfo(principal);
+        ApiResponse<User> response = appUserService.getCurrentUserInfo(AuthUtils.getCurrentUserId(principal));
         return new ResponseEntity<>(response, response.getHttpStatus());
     }
 }

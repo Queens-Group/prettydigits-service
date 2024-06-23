@@ -13,13 +13,11 @@ import shop.prettydigits.dto.request.ProductRequest;
 import shop.prettydigits.dto.response.ApiResponse;
 import shop.prettydigits.model.Product;
 
-import java.security.Principal;
-
 public interface ProductService {
 
-    ApiResponse<Product> createProduct(Principal principal, ProductRequest request);
+    ApiResponse<Product> createProduct(Long userId, ProductRequest request);
 
-    ApiResponse<Void> deleteProduct(Principal principal, Integer productId);
+    ApiResponse<Void> deleteProduct(Long userId, Integer productId);
 
     ApiResponse<PagedModel<Product>> getAllAvailableProduct(Pageable pageable);
 }

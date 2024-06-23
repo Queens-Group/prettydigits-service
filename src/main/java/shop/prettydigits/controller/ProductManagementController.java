@@ -19,6 +19,7 @@ import shop.prettydigits.dto.request.ProductRequest;
 import shop.prettydigits.dto.response.ApiResponse;
 import shop.prettydigits.model.Product;
 import shop.prettydigits.service.ProductService;
+import shop.prettydigits.utils.AuthUtils;
 
 import java.security.Principal;
 
@@ -37,13 +38,13 @@ public class ProductManagementController {
 
     @PostMapping(value = Route.NEW_PRODUCT)
     public ResponseEntity<ApiResponse<Product>> createProduct(Principal principal, @RequestBody @Valid ProductRequest request) {
-        ApiResponse<Product> response = productService.createProduct(principal, request);
+        ApiResponse<Product> response = productService.createProduct(AuthUtils.getCurrentUserId(principal), request);
         return new ResponseEntity<>(response, response.getHttpStatus());
     }
 
     @DeleteMapping(value = Route.PRODUCT_ID_VAR + Route.REMOVE)
     public ResponseEntity<ApiResponse<Void>> removeProduct(Principal principal, @PathVariable Integer productId) {
-        ApiResponse<Void> response = productService.deleteProduct(principal, productId);
+        ApiResponse<Void> response = productService.deleteProduct(AuthUtils.getCurrentUserId(principal), productId);
         return new ResponseEntity<>(response, response.getHttpStatus());
     }
 }
