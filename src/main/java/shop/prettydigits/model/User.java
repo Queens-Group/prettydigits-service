@@ -79,6 +79,7 @@ public class User implements UserDetails, Serializable {
     @JsonManagedReference
     private Set<Address> addresses;
 
+
     @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

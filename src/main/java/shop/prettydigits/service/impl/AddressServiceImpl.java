@@ -50,7 +50,7 @@ public class AddressServiceImpl implements AddressService {
     @Transactional
     @Override
     public ApiResponse<Boolean> deleteAddressById(Integer addressId, Long userId) {
-        int deleted = addressRepository.deleteByIdAndUser_userId(addressId, userId);
+        int deleted = addressRepository.deleteByIdAndUserUserId(addressId, userId);
         return ApiResponse.<Boolean>builder()
                 .code(200)
                 .message("success delete address")
@@ -63,7 +63,7 @@ public class AddressServiceImpl implements AddressService {
         return ApiResponse.<List<Address>>builder()
                 .code(200)
                 .message("success get user's addresses")
-                .data(addressRepository.findAllByUser_userId(userId))
+                .data(addressRepository.findAllByUserUserId(userId))
                 .build();
     }
 }

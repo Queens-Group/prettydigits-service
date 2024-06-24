@@ -1,2 +1,2 @@
-# prettydigits-service
+# Pretty Digits
 PrettyDigits Backend Service

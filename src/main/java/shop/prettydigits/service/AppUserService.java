@@ -14,13 +14,11 @@ import shop.prettydigits.dto.response.LoginResponse;
 import shop.prettydigits.dto.response.RegisterResponse;
 import shop.prettydigits.model.User;
 
-import java.security.Principal;
-
 public interface AppUserService {
 
     ApiResponse<LoginResponse> login(LoginRequest loginRequest);
 
     ApiResponse<RegisterResponse> registerUser(RegisterRequest request);
 
-    ApiResponse<User> getCurrentUserInfo(Principal principal);
+    ApiResponse<User> getCurrentUserInfo(Long userId);
 }

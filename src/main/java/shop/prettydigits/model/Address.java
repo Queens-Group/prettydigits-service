@@ -8,7 +8,6 @@ Version 1.0
 */
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -29,7 +28,6 @@ public class Address implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private Integer id;
 
@@ -65,4 +63,9 @@ public class Address implements Serializable {
     @Column(name = "created_at")
     @CreationTimestamp
     private ZonedDateTime createdAt;
+
+    @Override
+    public String toString() {
+        return String.format("%s, %s, %s, %s, %s %s", details, village, subDistrict, district,province, zipCode);
+    }
 }

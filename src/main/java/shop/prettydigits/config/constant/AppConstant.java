@@ -10,10 +10,10 @@ Version 1.0
 public class AppConstant {
 
 
-    private AppConstant() {}
     public static final String NO_AUTH_PATHS = "noAuthPaths";
+    public static final String SNAP_URL = "snapURL";
 
-    public static final String PUBLIC_KEY = "rsaPublicKey";
-    public static final String PRIVATE_KEY = "rsaPrivateKey";
+    private AppConstant() {
+    }
 
 }

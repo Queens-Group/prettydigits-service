@@ -11,44 +11,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import shop.prettydigits.config.constant.AppConstant;
 
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
-
 @Configuration
 public class CommonConfig {
 
-    private final KeyPair keyPair;
-
-    public CommonConfig() throws NoSuchAlgorithmException {
-        this.keyPair = keyPairGenerator();
-    }
 
     @Bean(AppConstant.NO_AUTH_PATHS)
     public String[] noAuthPaths() {
         return new String[]{
-                "/error**", "/swagger-ui/**",
+                "/error**", "/swagger-ui/**", "/midtrans/notification",
                 "/api/v1/auth/login", "/rest-api-docs/**",
-                "/api/v1/auth/register", "/"
+                "/api/v1/auth/register", "/", "/api/v1/products/**"
         };
-    }
-
-    @Bean(AppConstant.PUBLIC_KEY)
-    public RSAPublicKey rsaPublicKey() {
-        return (RSAPublicKey) this.keyPair.getPublic();
-    }
-
-    @Bean(AppConstant.PRIVATE_KEY)
-    public RSAPrivateKey rsaPrivateKey() {
-        return (RSAPrivateKey) this.keyPair.getPrivate();
-    }
-
-
-    private KeyPair keyPairGenerator() throws NoSuchAlgorithmException {
-        KeyPairGenerator generator = KeyPairGenerator.getInstance("rsa");
-        generator.initialize(2048);
-        return generator.generateKeyPair();
     }
 }

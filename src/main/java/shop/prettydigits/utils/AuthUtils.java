@@ -28,4 +28,9 @@ public class AuthUtils {
     public static Long getCurrentUserId(String subject) {
         return Long.parseLong(subject.split(",")[0]);
     }
+
+    public static String getCurrentUsername(String subject) {
+        return subject.split(",")[1];
+    }
+
 }
