@@ -8,12 +8,13 @@ Version 1.0
 */
 
 import com.midtrans.httpclient.error.MidtransError;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedModel;
 import shop.prettydigits.constant.order.OrderStatus;
 import shop.prettydigits.dto.response.ApiResponse;
 import shop.prettydigits.dto.response.CheckOrderValidity;
+import shop.prettydigits.dto.response.OrderResponse;
 import shop.prettydigits.model.Order;
-
-import java.util.List;
 
 public interface OrderService {
 
@@ -23,6 +24,10 @@ public interface OrderService {
 
     ApiResponse<Object> updateOrderStatus(Long userId, String orderId, OrderStatus orderStatus);
 
-    ApiResponse<List<Order>> getUserOrderByStatus(Long userId, OrderStatus orderStatus);
+    ApiResponse<PagedModel<OrderResponse>> getUserOrderByStatus(Long userId, OrderStatus orderStatus, Pageable pageable);
+    ApiResponse<PagedModel<OrderResponse>> getOrderByStatus(OrderStatus orderStatus, Pageable pageable);
+    ApiResponse<PagedModel<OrderResponse>> getAllOrders(Long userId, Pageable pageable);
+    ApiResponse<PagedModel<OrderResponse>> getAllOrders(Pageable pageable);
+
 
 }

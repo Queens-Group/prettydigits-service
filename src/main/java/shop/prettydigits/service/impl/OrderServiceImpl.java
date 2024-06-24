@@ -7,15 +7,20 @@ Created on 6/23/2024 12:18 PM
 Version 1.0
 */
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.midtrans.httpclient.error.MidtransError;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.prettydigits.config.properties.AppProperties;
 import shop.prettydigits.constant.order.OrderStatus;
 import shop.prettydigits.dto.response.ApiResponse;
 import shop.prettydigits.dto.response.CheckOrderValidity;
+import shop.prettydigits.dto.response.OrderResponse;
 import shop.prettydigits.model.*;
 import shop.prettydigits.repository.*;
 import shop.prettydigits.service.OrderService;
@@ -33,6 +38,8 @@ public class OrderServiceImpl implements OrderService {
 
     private final CartRepository cartRepository;
 
+    private final ObjectMapper mapper;
+
     private final OrderRepository orderRepository;
 
     private final OrderItemRepository orderItemRepository;
@@ -46,6 +53,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     public OrderServiceImpl(CartRepository cartRepository,
+                            ObjectMapper mapper,
                             OrderRepository orderRepository,
                             OrderItemRepository orderItemRepository,
                             MidtransService midtransService,
@@ -54,6 +62,7 @@ public class OrderServiceImpl implements OrderService {
                             ProductRepository productRepository,
                             AppProperties appProperties) {
         this.cartRepository = cartRepository;
+        this.mapper = mapper;
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
         this.midtransService = midtransService;
@@ -170,8 +179,45 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ApiResponse<List<Order>> getUserOrderByStatus(Long userId, OrderStatus orderStatus) {
-        return null;
+    public ApiResponse<PagedModel<OrderResponse>> getUserOrderByStatus(Long userId, OrderStatus orderStatus, Pageable pageable) {
+        Page<Order> orders;
+        if (userId != null && userId > 0) {
+            orders = orderRepository.findByUserUserIdAndStatus(userId, orderStatus, pageable);
+        } else {
+            orders = orderRepository.findByStatus(orderStatus, pageable);
+        }
+
+        return ApiResponse.<PagedModel<OrderResponse>>builder()
+                .code(200)
+                .message("success get orders")
+                .data(new PagedModel<>(orders.map(item -> mapper.convertValue(item, OrderResponse.class))))
+                .build();
+    }
+
+    @Override
+    public ApiResponse<PagedModel<OrderResponse>> getOrderByStatus(OrderStatus orderStatus, Pageable pageable) {
+        return getUserOrderByStatus(null, orderStatus, pageable);
+    }
+
+    @Override
+    public ApiResponse<PagedModel<OrderResponse>> getAllOrders(Long userId, Pageable pageable) {
+        Page<Order> orders ;
+        if (userId != null && userId > 0) {
+            orders = orderRepository.findByUserUserId(userId, pageable);
+        } else {
+            orders = orderRepository.findAll(pageable);
+        }
+
+        return ApiResponse.<PagedModel<OrderResponse>>builder()
+                .code(200)
+                .message("success get orders")
+                .data(new PagedModel<>(orders.map(item -> mapper.convertValue(item, OrderResponse.class))))
+                .build();
+    }
+
+    @Override
+    public ApiResponse<PagedModel<OrderResponse>> getAllOrders(Pageable pageable) {
+        return getAllOrders(null, pageable);
     }
 
     private double getGrossAmount(List<OrderItem> orderItems) {

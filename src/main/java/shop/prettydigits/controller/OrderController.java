@@ -9,12 +9,17 @@ Version 1.0
 
 import com.midtrans.httpclient.error.MidtransError;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import shop.prettydigits.config.constant.Route;
+import shop.prettydigits.constant.order.OrderStatus;
 import shop.prettydigits.dto.response.ApiResponse;
 import shop.prettydigits.dto.response.CheckOrderValidity;
+import shop.prettydigits.dto.response.OrderResponse;
 import shop.prettydigits.model.Order;
 import shop.prettydigits.service.OrderService;
 import shop.prettydigits.utils.AuthUtils;
@@ -44,6 +49,19 @@ public class OrderController {
     public ResponseEntity<ApiResponse<CheckOrderValidity>> checkOrderExpiry(Principal principal, @PathVariable("orderId") String orderId) {
         Long userId = AuthUtils.getCurrentUserId(principal);
         ApiResponse<CheckOrderValidity> response = orderService.checkOrderBeforePayment(userId, orderId);
+        return new ResponseEntity<>(response, response.getHttpStatus());
+    }
+
+    @GetMapping("")
+    public ResponseEntity<ApiResponse<PagedModel<OrderResponse>>> getOrders(Principal principal, @RequestParam(value = "status", required = false) OrderStatus orderStatus, @ParameterObject Pageable pageable) {
+        Long userId = AuthUtils.getCurrentUserId(principal);
+        ApiResponse<PagedModel<OrderResponse>> response;
+
+        if (orderStatus == null) {
+            response = orderService.getAllOrders(userId, pageable);
+        } else {
+            response = orderService.getUserOrderByStatus(userId, orderStatus, pageable);
+        }
         return new ResponseEntity<>(response, response.getHttpStatus());
     }
 }
