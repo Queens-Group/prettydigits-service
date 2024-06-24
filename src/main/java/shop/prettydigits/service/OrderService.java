@@ -14,6 +14,7 @@ import shop.prettydigits.constant.order.OrderStatus;
 import shop.prettydigits.dto.response.ApiResponse;
 import shop.prettydigits.dto.response.CheckOrderValidity;
 import shop.prettydigits.dto.response.OrderResponse;
+import shop.prettydigits.dto.response.PatchResponse;
 import shop.prettydigits.model.Order;
 
 public interface OrderService {
@@ -22,7 +23,7 @@ public interface OrderService {
 
     ApiResponse<CheckOrderValidity> checkOrderBeforePayment(Long userId, String orderId);
 
-    ApiResponse<Object> updateOrderStatus(Long userId, String orderId, OrderStatus orderStatus);
+    ApiResponse<PatchResponse> updateOrderStatus(String adminUsername, String orderId, OrderStatus orderStatus);
 
     ApiResponse<PagedModel<OrderResponse>> getUserOrderByStatus(Long userId, OrderStatus orderStatus, Pageable pageable);
     ApiResponse<PagedModel<OrderResponse>> getOrderByStatus(OrderStatus orderStatus, Pageable pageable);

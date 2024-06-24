@@ -56,6 +56,9 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
+    @Column(name = "modified_by")
+    private String modifiedBy;
+
     @Column(name = "snap_token")
     private String snapToken;
 

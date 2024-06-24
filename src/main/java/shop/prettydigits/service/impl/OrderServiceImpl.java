@@ -18,19 +18,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.prettydigits.config.properties.AppProperties;
 import shop.prettydigits.constant.order.OrderStatus;
+import shop.prettydigits.dto.request.UpdateOrderStatusReq;
 import shop.prettydigits.dto.response.ApiResponse;
 import shop.prettydigits.dto.response.CheckOrderValidity;
 import shop.prettydigits.dto.response.OrderResponse;
+import shop.prettydigits.dto.response.PatchResponse;
 import shop.prettydigits.model.*;
 import shop.prettydigits.repository.*;
 import shop.prettydigits.service.OrderService;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 
 @Service
@@ -173,9 +172,24 @@ public class OrderServiceImpl implements OrderService {
 
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
-    public ApiResponse<Object> updateOrderStatus(Long userId, String orderId, OrderStatus orderStatus) {
-        return null;
+    public ApiResponse<PatchResponse> updateOrderStatus(String adminUsername, String orderId, OrderStatus orderStatus) {
+        UpdateOrderStatusReq data = new UpdateOrderStatusReq();
+        data.setOrderId(orderId);
+        data.setStatus(orderStatus);
+        data.setAdminUsername(adminUsername);
+
+        int affectedRows = orderRepository.updateOrderStatusByOrderId(data);
+        PatchResponse result = new PatchResponse();
+        result.setSuccess(true);
+        result.setAffectedRows(affectedRows);
+
+        return ApiResponse.<PatchResponse>builder()
+                .code(200)
+                .message("success execute update query")
+                .data(result)
+                .build();
     }
 
     @Override

@@ -20,6 +20,7 @@ public class Route {
     public static final String CHECK_EXPIRY = "/check-expiry";
     public static final String ORDER_ID = "/{orderId}";
     public static final String ADMIN = "/admin";
+    public static final String UPDATE_STATUS = "/update-status";
 
     private Route() {}
 
