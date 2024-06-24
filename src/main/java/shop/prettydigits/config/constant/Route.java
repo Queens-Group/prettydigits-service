@@ -13,6 +13,14 @@ public class Route {
     public static final String CART_ID = "/{cartId}";
     public static final String ITEM_ID = "/{itemId}";
     public static final String ITEM = "/item";
+    public static final String ORDERS = "/orders";
+    public static final String CHECKOUT = "/checkout";
+    public static final String MIDTRANS = "/midtrans";
+    public static final String NOTIFICATION = "/notification";
+    public static final String CHECK_EXPIRY = "/check-expiry";
+    public static final String ORDER_ID = "/{orderId}";
+    public static final String ADMIN = "/admin";
+    public static final String UPDATE_STATUS = "/update-status";
 
     private Route() {}
 

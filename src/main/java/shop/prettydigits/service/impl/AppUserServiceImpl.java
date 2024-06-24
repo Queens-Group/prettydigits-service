@@ -9,7 +9,6 @@ Version 1.0
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -22,6 +21,7 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import shop.prettydigits.config.properties.AppProperties;
 import shop.prettydigits.constant.role.Role;
 import shop.prettydigits.dto.request.LoginRequest;
 import shop.prettydigits.dto.request.RegisterRequest;
@@ -55,11 +55,8 @@ public class AppUserServiceImpl implements AppUserService {
 
     private final ObjectMapper mapper;
 
-    @Value("${jwt.token.age:3600}")
-    private Long jwtExpiry;
+    private final AppProperties appProperties;
 
-    @Value("${jwt.issuer}")
-    private String issuer;
 
     @Autowired
     public AppUserServiceImpl(UserRepository userRepository,
@@ -67,13 +64,15 @@ public class AppUserServiceImpl implements AppUserService {
                               BCryptPasswordEncoder passwordEncoder,
                               AuthenticationProvider authenticationProvider,
                               JwtEncoder jwtEncoder,
-                              ObjectMapper mapper) {
+                              ObjectMapper mapper,
+                              AppProperties appProperties) {
         this.userRepository = userRepository;
         this.cartRepository = cartRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationProvider = authenticationProvider;
         this.jwtEncoder = jwtEncoder;
         this.mapper = mapper;
+        this.appProperties = appProperties;
     }
 
 
@@ -97,9 +96,9 @@ public class AppUserServiceImpl implements AppUserService {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(" "));
         JwtClaimsSet claim = JwtClaimsSet.builder()
-                .issuer(issuer)
+                .issuer(appProperties.getJWT_ISSUER())
                 .issuedAt(now)
-                .expiresAt(now.plusSeconds(jwtExpiry))
+                .expiresAt(now.plusSeconds(appProperties.getJWT_TOKEN_AGE()))
                 .subject(String.format("%s,%s", user.getUserId(), user.getUsername()))
                 .claim("roles", scope)
                 .build();

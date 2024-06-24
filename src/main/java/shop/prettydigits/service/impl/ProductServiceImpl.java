@@ -21,7 +21,6 @@ import shop.prettydigits.model.Product;
 import shop.prettydigits.repository.CartItemRepository;
 import shop.prettydigits.repository.ProductRepository;
 import shop.prettydigits.service.ProductService;
-import shop.prettydigits.utils.AuthUtils;
 
 import java.util.Optional;
 
@@ -44,10 +43,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Transactional
     @Override
-    public ApiResponse<Product> createProduct(Long userId, ProductRequest request) {
-        String adminName = AuthUtils.getCurrentUsername(userId.getName());
+    public ApiResponse<Product> createProduct(String username, ProductRequest request) {
         Product product = mapper.convertValue(request, Product.class);
-        product.setModifiedBy(adminName);
+        product.setModifiedBy(username);
 
         productRepository.save(product);
         return ApiResponse.<Product>builder()
@@ -60,7 +58,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     @Modifying
     @Override
-    public ApiResponse<Void> deleteProduct(Long userId, Integer productId) {
+    public ApiResponse<Void> deleteProduct(String username, Integer productId) {
         Optional<Product> product = productRepository.findById(productId);
 
         if (product.isEmpty()) {
@@ -70,11 +68,11 @@ public class ProductServiceImpl implements ProductService {
                     .build();
         }
         product.get().setIsAvailable(false);
-        product.get().setModifiedBy(AuthUtils.getCurrentUsername(userId.getName()));
+        product.get().setModifiedBy(username);
 
 
         productRepository.save(product.get());
-        cartItemRepository.deleteAllInBatchByProduct_id(productId);
+        cartItemRepository.deleteAllInBatchByProductId(productId);
         return ApiResponse.<Void>builder()
                 .code(200)
                 .message("success delete product")

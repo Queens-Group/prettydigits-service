@@ -11,6 +11,7 @@ public class AppConstant {
 
 
     public static final String NO_AUTH_PATHS = "noAuthPaths";
+    public static final String SNAP_URL = "snapURL";
 
     private AppConstant() {
     }

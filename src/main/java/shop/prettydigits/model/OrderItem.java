@@ -13,6 +13,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.io.Serializable;
 import java.time.ZonedDateTime;
 
 @Entity
@@ -22,7 +23,7 @@ import java.time.ZonedDateTime;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderItem {
+public class OrderItem implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,9 +36,6 @@ public class OrderItem {
     @ManyToOne
     private Product product;
 
-    @Column(nullable = false)
-    private Integer quantity;
-
     @Column(name = "created_at")
     @CreationTimestamp
     private ZonedDateTime createdAt;
@@ -45,4 +43,17 @@ public class OrderItem {
     @Column(name = "updated_at")
     @UpdateTimestamp
     private ZonedDateTime updatedAt;
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof  OrderItem item) {
+            return item.getId().equals(this.id);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 }

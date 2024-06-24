@@ -38,13 +38,13 @@ public class ProductManagementController {
 
     @PostMapping(value = Route.NEW_PRODUCT)
     public ResponseEntity<ApiResponse<Product>> createProduct(Principal principal, @RequestBody @Valid ProductRequest request) {
-        ApiResponse<Product> response = productService.createProduct(AuthUtils.getCurrentUserId(principal), request);
+        ApiResponse<Product> response = productService.createProduct(AuthUtils.getCurrentUsername(principal.getName()), request);
         return new ResponseEntity<>(response, response.getHttpStatus());
     }
 
     @DeleteMapping(value = Route.PRODUCT_ID_VAR + Route.REMOVE)
     public ResponseEntity<ApiResponse<Void>> removeProduct(Principal principal, @PathVariable Integer productId) {
-        ApiResponse<Void> response = productService.deleteProduct(AuthUtils.getCurrentUserId(principal), productId);
+        ApiResponse<Void> response = productService.deleteProduct(AuthUtils.getCurrentUsername(principal.getName()), productId);
         return new ResponseEntity<>(response, response.getHttpStatus());
     }
 }

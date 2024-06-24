@@ -7,7 +7,6 @@ Created on 6/22/2024 1:56 PM
 Version 1.0
 */
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +19,6 @@ import shop.prettydigits.repository.CartItemRepository;
 import shop.prettydigits.repository.CartRepository;
 import shop.prettydigits.repository.ProductRepository;
 import shop.prettydigits.service.CartService;
-import shop.prettydigits.utils.AuthUtils;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -35,29 +33,34 @@ public class CartServiceImpl implements CartService {
 
     private final ProductRepository productRepository;
 
-    private final ObjectMapper mapper;
-
     @Autowired
-    public CartServiceImpl(CartRepository cartRepository, CartItemRepository cartItemRepository, ProductRepository productRepository, ObjectMapper mapper) {
+    public CartServiceImpl(CartRepository cartRepository, CartItemRepository cartItemRepository, ProductRepository productRepository) {
         this.cartRepository = cartRepository;
         this.cartItemRepository = cartItemRepository;
         this.productRepository = productRepository;
-        this.mapper = mapper;
     }
 
     @Transactional
     @Override
     public ApiResponse<Boolean> addItemToCart(Long userId, CartItemDTO cartItemDTO) throws ExecutionException, InterruptedException {
-        Long userId = AuthUtils.getCurrentUserId(userId);
-        CompletableFuture<Cart> userCart = CompletableFuture.supplyAsync(() -> cartRepository.findByUser_userId(userId));
+        CompletableFuture<Cart> userCart = CompletableFuture.supplyAsync(() -> cartRepository.findByUserUserId(userId));
         CompletableFuture<Optional<Product>> product = CompletableFuture.supplyAsync(() -> productRepository.findByIdAndIsAvailableTrue(cartItemDTO.getProductId()));
+        CompletableFuture<Boolean> checkDuplicateProduct = CompletableFuture.supplyAsync(() -> cartItemRepository.existsByProductId(cartItemDTO.getProductId()));
 
-        CompletableFuture.allOf(userCart, product).join();
+        CompletableFuture.allOf(userCart, product, checkDuplicateProduct).join();
 
         if (product.get().isEmpty()) {
             return ApiResponse.<Boolean>builder()
                     .code(404)
                     .message("failed added to cart, product does not exist or not available")
+                    .data(false)
+                    .build();
+        }
+
+        if (Boolean.TRUE.equals(checkDuplicateProduct.get())) {
+            return ApiResponse.<Boolean>builder()
+                    .code(409)
+                    .message("product already in cart")
                     .data(false)
                     .build();
         }
@@ -78,8 +81,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public ApiResponse<Cart> getUserCart(Long userId) {
-        Long userId = AuthUtils.getCurrentUserId(userId);
-        Cart cart = cartRepository.findByUser_userId(userId);
+        Cart cart = cartRepository.findByUserUserId(userId);
         return ApiResponse.<Cart>builder()
                 .code(200)
                 .message("success get user cart")
@@ -90,7 +92,7 @@ public class CartServiceImpl implements CartService {
     @Transactional
     @Override
     public ApiResponse<Boolean> removeCartItem(Long userId, Integer cartId, Integer itemId) {
-        int affectedRow = cartItemRepository.deleteByIdAndCart_idAndCart_User_userId(itemId, cartId, AuthUtils.getCurrentUserId(userId));
+        int affectedRow = cartItemRepository.deleteByIdAndCartIdAndCartUserUserId(itemId, cartId, userId);
         return ApiResponse.<Boolean>builder()
                 .code(200)
                 .message("success remove item from cart")

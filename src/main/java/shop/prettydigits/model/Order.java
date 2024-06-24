@@ -32,7 +32,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private User user;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "order")
@@ -50,8 +50,14 @@ public class Order {
     @Column(name = "payment_type", length = 50)
     private String paymentType;
 
+    @Column(name = "midtrans_transaction_id")
+    private String midtransTransactionId;
+
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
+
+    @Column(name = "modified_by")
+    private String modifiedBy;
 
     @Column(name = "snap_token")
     private String snapToken;
@@ -59,6 +65,9 @@ public class Order {
     @Column(name = "created_at")
     @CreationTimestamp
     private ZonedDateTime createdAt;
+
+    @Column(name = "expired_at")
+    private ZonedDateTime expiredAt;
 
     @Column(name = "updated_at")
     @UpdateTimestamp

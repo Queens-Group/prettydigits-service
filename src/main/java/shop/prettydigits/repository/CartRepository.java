@@ -12,5 +12,6 @@ import shop.prettydigits.model.Cart;
 
 public interface CartRepository extends JpaRepository<Cart, Integer> {
 
-    Cart findByUser_userId(Long userId);
+    Cart findByUserUserId(Long userId);
+
 }

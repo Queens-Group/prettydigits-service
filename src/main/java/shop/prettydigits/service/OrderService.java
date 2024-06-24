@@ -7,18 +7,28 @@ Created on 6/23/2024 11:14 AM
 Version 1.0
 */
 
+import com.midtrans.httpclient.error.MidtransError;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedModel;
 import shop.prettydigits.constant.order.OrderStatus;
 import shop.prettydigits.dto.response.ApiResponse;
+import shop.prettydigits.dto.response.CheckOrderValidity;
+import shop.prettydigits.dto.response.OrderResponse;
+import shop.prettydigits.dto.response.PatchResponse;
 import shop.prettydigits.model.Order;
-
-import java.util.List;
 
 public interface OrderService {
 
-    ApiResponse<Order> createOrder(Long userId, Integer cartId);
+    ApiResponse<Order> createOrder(Long userId, Integer addressId) throws MidtransError;
 
-    ApiResponse<Object> updateOrderStatus(Long userId, String orderId, OrderStatus orderStatus);
+    ApiResponse<CheckOrderValidity> checkOrderBeforePayment(Long userId, String orderId);
 
-    ApiResponse<List<Order>> getUserOrderByStatus(Long userId, OrderStatus orderStatus);
+    ApiResponse<PatchResponse> updateOrderStatus(String adminUsername, String orderId, OrderStatus orderStatus);
+
+    ApiResponse<PagedModel<OrderResponse>> getUserOrderByStatus(Long userId, OrderStatus orderStatus, Pageable pageable);
+    ApiResponse<PagedModel<OrderResponse>> getOrderByStatus(OrderStatus orderStatus, Pageable pageable);
+    ApiResponse<PagedModel<OrderResponse>> getAllOrders(Long userId, Pageable pageable);
+    ApiResponse<PagedModel<OrderResponse>> getAllOrders(Pageable pageable);
+
 
 }
