@@ -67,6 +67,9 @@ public class SecurityConfig {
     @Value("${jwt.private.key}")
     private RSAPrivateKey rsaPrivateKey;
 
+    @Value("${cors.allowed.origins}")
+    private List<String> allowedOrigins;
+
     @Autowired
     public SecurityConfig(@Qualifier(AppConstant.NO_AUTH_PATHS) String[] noAuthPaths,
                           AppUserDetailsService appUserDetailsService,
@@ -140,8 +143,9 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("*"));
+        configuration.setAllowedOrigins(allowedOrigins);
         configuration.setAllowedMethods(List.of("*"));
+        configuration.setAllowedHeaders(List.of("*"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
