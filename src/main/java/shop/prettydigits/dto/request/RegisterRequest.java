@@ -16,19 +16,19 @@ import shop.prettydigits.constant.role.Role;
 @Data
 public class RegisterRequest {
 
-    @NotBlank
+    @NotBlank(message = "username should not be blank")
     private String username;
 
-    @NotBlank
+    @NotBlank(message = "phone should not be blank")
     private String phone;
 
-    @NotBlank
+    @NotBlank(message = "fullname should not be blank")
     private String fullName;
 
-    @NotBlank
-    @Size(min = 6)
+    @NotBlank(message = "password should be blank")
+    @Size(message = "password should be 6 characters long at minimum", min = 6)
     private String password;
 
-    @NotNull
+    @NotNull(message = "role should not be null or blank")
     private Role role;
 }
