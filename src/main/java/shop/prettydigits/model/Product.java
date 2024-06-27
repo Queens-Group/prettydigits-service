@@ -39,7 +39,7 @@ public class Product {
     private Boolean isAvailable = true;
 
     @Column
-    private String type;
+    private String provider;
 
     @Column(nullable = false)
     @ColumnDefault("0.0")

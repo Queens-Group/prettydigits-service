@@ -20,7 +20,7 @@ public class CommonConfig {
         return new String[]{
                 "/error**", "/swagger-ui/**", "/midtrans/notification",
                 "/api/v1/auth/login", "/rest-api-docs/**",
-                "/api/v1/auth/register", "/", "/api/v1/products/**"
+                "/api/v1/auth/register", "/", "/api/v1/products/**", "/actuator/**"
         };
     }
 }
