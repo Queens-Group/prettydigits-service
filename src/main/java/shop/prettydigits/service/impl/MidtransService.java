@@ -162,7 +162,7 @@ public class MidtransService {
         Product product = orderItem.getProduct();
         item.setId(String.valueOf(product.getId()));
         item.setName(product.getNumber());
-        item.setBrand(product.getType());
+        item.setBrand(product.getProvider());
         item.setQuantity(1);
         item.setPrice(product.getPrice().intValue());
         return item;

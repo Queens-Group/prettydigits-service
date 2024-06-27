@@ -47,7 +47,7 @@ public class OrderItemResponse implements Serializable {
         this.simCardNumber = product.getNumber();
         this.productDescription = product.getDescription();
         this.isProductAvailable = product.getIsAvailable();
-        this.productType = product.getType();
+        this.productType = product.getProvider();
         this.price = product.getPrice();
         this.validityPeriod = Optional.ofNullable(product.getValidityPeriod())
                 .map(localDate -> localDate.format(DateTimeFormatter.ofPattern("dd MMMM yyyy")))
