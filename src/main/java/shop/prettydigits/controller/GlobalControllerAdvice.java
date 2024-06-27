@@ -7,12 +7,14 @@ Created on 6/21/2024 9:43 PM
 Version 1.0
 */
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -57,12 +59,21 @@ public class GlobalControllerAdvice {
     }
 
     @ExceptionHandler(AuthorizationDeniedException.class)
-    public ResponseEntity<ApiResponse<String>> accessDeniedHandler(AuthorizationDeniedException ex) {
+    public ResponseEntity<ApiResponse<String>> accessDeniedHandler(AuthorizationDeniedException ex, HttpServletRequest request) {
         ApiResponse<String> response = new ApiResponse<>();
         response.setCode(403);
-        response.setMessage(ex.getMessage());
-        response.setData("You are not allowed to access this resource. Please contact admin.");
+        response.setMessage("You are not allowed to access this resource. Please contact admin.");
+        response.setData(request.getRequestURI());
         return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ApiResponse<String>> accessDeniedHandler(HttpRequestMethodNotSupportedException ex, HttpServletRequest req) {
+        ApiResponse<String> response = new ApiResponse<>();
+        response.setCode(405);
+        response.setMessage(ex.getMessage());
+        response.setData(req.getRequestURI());
+        return new ResponseEntity<>(response, HttpStatus.METHOD_NOT_ALLOWED);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
