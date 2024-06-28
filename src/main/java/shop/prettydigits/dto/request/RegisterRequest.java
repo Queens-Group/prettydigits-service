@@ -9,6 +9,7 @@ Version 1.0
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import shop.prettydigits.constant.role.Role;
@@ -20,6 +21,7 @@ public class RegisterRequest {
     private String username;
 
     @NotBlank(message = "phone should not be blank")
+    @Pattern(message = "phone should be numerical characters", regexp = "^\\d+$")
     private String phone;
 
     @NotBlank(message = "fullname should not be blank")

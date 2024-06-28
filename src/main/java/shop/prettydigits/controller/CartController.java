@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import shop.prettydigits.config.constant.Route;
 import shop.prettydigits.dto.request.CartItemDTO;
 import shop.prettydigits.dto.response.ApiResponse;
-import shop.prettydigits.model.Cart;
+import shop.prettydigits.dto.response.CartResponse;
 import shop.prettydigits.service.CartService;
 import shop.prettydigits.utils.AuthUtils;
 
@@ -41,8 +41,8 @@ public class CartController {
     }
 
     @GetMapping("")
-    public ResponseEntity<ApiResponse<Cart>> getUserCart(Principal principal) {
-        ApiResponse<Cart> response = cartService.getUserCart(AuthUtils.getCurrentUserId(principal));
+    public ResponseEntity<ApiResponse<CartResponse>> getUserCart(Principal principal) {
+        ApiResponse<CartResponse> response = cartService.getUserCart(AuthUtils.getCurrentUserId(principal));
         return new ResponseEntity<>(response, response.getHttpStatus());
     }
 

@@ -2,8 +2,8 @@ package shop.prettydigits.dto.response;
 /*
 @Author hakim a.k.a. Hakim Amarullah
 Java Developer
-Created on 6/24/2024 1:11 PM
-@Last Modified 6/24/2024 1:11 PM
+Created on 6/28/2024 3:14 PM
+@Last Modified 6/28/2024 3:14 PM
 Version 1.0
 */
 
@@ -11,13 +11,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import shop.prettydigits.model.Product;
 
-import java.io.Serializable;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 @Data
-public class OrderItemResponse implements Serializable {
-
+public class CartItemResponse {
 
     private Integer id;
 
