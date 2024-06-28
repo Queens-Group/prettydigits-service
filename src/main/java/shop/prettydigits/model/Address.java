@@ -60,6 +60,9 @@ public class Address implements Serializable {
     @NotBlank(message = "please provide address's details")
     private String details;
 
+    @Column(name = "is_default")
+    private Boolean isDefault = false;
+
     @Column(name = "created_at")
     @CreationTimestamp
     private ZonedDateTime createdAt;
