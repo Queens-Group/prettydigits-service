@@ -53,4 +53,11 @@ public class AddressController {
         ApiResponse<Boolean> response = addressService.deleteAddressById(addressId, userId);
         return new ResponseEntity<>(response, response.getHttpStatus());
     }
+
+    @PatchMapping("/{addressId}")
+    public ResponseEntity<ApiResponse<Object>> setDefaultAddress(Principal principal, @PathVariable Integer addressId) {
+        long userId = AuthUtils.getCurrentUserId(principal);
+        ApiResponse<Object> response = addressService.setDefaultAddress(addressId, userId);
+        return new ResponseEntity<>(response, response.getHttpStatus());
+    }
 }

@@ -17,4 +17,6 @@ public interface AddressService {
     ApiResponse<Address> saveAddress(Address address, Long userId);
     ApiResponse<Boolean> deleteAddressById(Integer addressId, Long userId);
     ApiResponse<List<Address>> getAddressByUserId(Long userId);
+
+    ApiResponse<Object> setDefaultAddress(Integer addressId, Long userId);
 }
