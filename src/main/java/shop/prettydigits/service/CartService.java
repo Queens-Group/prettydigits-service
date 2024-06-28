@@ -9,7 +9,7 @@ Version 1.0
 
 import shop.prettydigits.dto.request.CartItemDTO;
 import shop.prettydigits.dto.response.ApiResponse;
-import shop.prettydigits.model.Cart;
+import shop.prettydigits.dto.response.CartResponse;
 
 import java.util.concurrent.ExecutionException;
 
@@ -17,7 +17,7 @@ public interface CartService {
 
     ApiResponse<Boolean> addItemToCart(Long userId, CartItemDTO cartItem) throws ExecutionException, InterruptedException;
 
-    ApiResponse<Cart> getUserCart(Long userId);
+    ApiResponse<CartResponse> getUserCart(Long userId);
 
     ApiResponse<Boolean> removeCartItem(Long userId, Integer cartId, Integer itemId);
 }
