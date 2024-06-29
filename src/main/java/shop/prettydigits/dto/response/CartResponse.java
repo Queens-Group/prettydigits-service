@@ -9,8 +9,13 @@ Version 1.0
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import shop.prettydigits.model.Address;
+import shop.prettydigits.model.User;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Data
@@ -21,6 +26,10 @@ public class CartResponse {
 
     private Set<CartItemResponse> cartItems;
 
+    private List<Address> addresses;
+    private ZonedDateTime createdAt;
+    private ZonedDateTime updatedAt;
+    private Double totalPrice;
 
     @JsonProperty("id")
     public void setId(Integer id) {
@@ -32,11 +41,12 @@ public class CartResponse {
         return this.cartId;
     }
 
-    private ZonedDateTime createdAt;
+    @JsonProperty("user")
+    public void setUser(User user) {
+        this.addresses = Optional.ofNullable(user)
+                .map(u -> new ArrayList<>(u.getAddresses()))
+                .orElse(new ArrayList<>());
+    }
 
-
-    private ZonedDateTime updatedAt;
-
-    private Double totalPrice;
 }
 
