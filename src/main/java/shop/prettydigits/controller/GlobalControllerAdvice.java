@@ -16,6 +16,7 @@ import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import shop.prettydigits.dto.response.ApiResponse;
@@ -82,6 +83,16 @@ public class GlobalControllerAdvice {
         response.setCode(400);
         response.setMessage(ex.getMostSpecificCause().getLocalizedMessage());
         response.setData(ex.getMessage());
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<ApiResponse<String>> missingServletRequestParameterException(MissingServletRequestParameterException ex) {
+        ApiResponse<String> response = new ApiResponse<>();
+        response.setCode(400);
+        response.setMessage(ex.getMessage());
+        response.setData(ex.getParameterName());
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
