@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jdk-alpine AS builder
+FROM eclipse-temurin:21-jdk-alpine AS builder
 WORKDIR /opt/app
 
 COPY .mvn/ .mvn
@@ -8,14 +8,14 @@ COPY ./src ./src
 RUN ./mvnw clean install -DskipTests
 
 
-FROM eclipse-temurin:17 AS jre-build
+FROM eclipse-temurin:21 AS jre-build
 WORKDIR /opt/app
 COPY --from=builder /opt/app/target/*.jar /opt/app/*.jar
 
 RUN jar xf /opt/app/*.jar
 RUN ${JAVA_HOME}/bin/jdeps --ignore-missing-deps -q  \
     --recursive  \
-    --multi-release 17  \
+    --multi-release 21  \
     --print-module-deps  \
     --class-path 'BOOT-INF/lib/*'  \
     /opt/app/*.jar > deps.info
